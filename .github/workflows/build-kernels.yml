@@ -1,4 +1,4 @@
-name: 🚀 YuukiKernel Universal GKI LTS Automated CI Builder
+name: YuukiKernel Universal GKI LTS CI
 
 on:
   push:
@@ -8,58 +8,52 @@ on:
   workflow_dispatch:
     inputs:
       telegram_notify:
-        description: 'Send Notification to Telegram Channel?'
+        description: 'Notify Telegram Channel?'
         required: false
         type: boolean
         default: true
 
 jobs:
   build-gki-matrix:
-    name: 🛠️ Build ${{ matrix.kernel.name }}
+    name: Build ${{ matrix.kernel.name }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         kernel:
-          - name: "Universal GKI 6.12 LTS (Android 16)"
+          - name: "GKI 6.12 LTS"
             dir: "GKI_6.12"
-            version: "6.12.90"
-            tag: "GKI-6.12"
-          - name: "Universal GKI 5.10 LTS (Android 12)"
+          - name: "GKI 5.10 LTS"
             dir: "GKI_5.10"
-            version: "5.10.265"
-            tag: "GKI-5.10"
 
     steps:
-      - name: 📥 Checkout Codebase
+      - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
 
-      - name: 🧹 Optimize Storage
+      - name: Clean Runner Space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/powershell /usr/lib/jvm
           sudo apt-get clean
 
-      - name: ⚙️ Install Dependencies
+      - name: Install Build Tools
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl zstd python3 libtinfo5
 
-      - name: 🚀 Setup Neutron Clang 24 Toolchain
+      - name: Setup Toolchain (Neutron Clang 24)
         run: |
           mkdir -p neutron-clang
           cd neutron-clang
           curl -s https://raw.githubusercontent.com/Neutron-Clang/neutron-clang/master/antman | bash -s -- -sync
           cd ..
 
-      - name: 🔨 Compile ${{ matrix.kernel.name }}
+      - name: Build Kernel (${{ matrix.kernel.name }})
         run: |
           cd ${{ matrix.kernel.dir }}
           chmod +x build.sh
           ./build.sh
 
-      - name: 🔍 Store Output Package
+      - name: Locate Output Zip
         id: find_zip
         run: |
           ZIP_FILE=$(find ${{ matrix.kernel.dir }}/ -maxdepth 1 -name "YuukiKernel-*.zip" | head -n 1)
@@ -72,22 +66,22 @@ jobs:
             exit 1
           fi
 
-      - name: 📊 Summary Report
+      - name: Write Summary
         run: |
-          echo "### ⚡ Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Artifact**: \`${{ env.ZIP_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "### YuukiKernel Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **File**: \`${{ env.ZIP_NAME }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **MD5**: \`${{ env.MD5_HASH }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Toolchain**: Neutron Clang 24 (PGO/BOLT)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Root Engine**: ReSukiSU v4.2.0-rc1 (Build 35089)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Compiler**: Neutron Clang 24 (PGO/BOLT)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Root**: ReSukiSU v4.2.0-rc1 (Build 35089)" >> $GITHUB_STEP_SUMMARY
           echo "- **Features**: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG" >> $GITHUB_STEP_SUMMARY
 
-      - name: 📤 Upload Artifact
+      - name: Upload Zip Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
           path: ${{ env.ZIP_PATH }}
 
-      - name: 📲 Notify Telegram
+      - name: Notify Telegram Channel
         if: ${{ inputs.telegram_notify != false }}
         run: |
           TOKEN="${{ secrets.TELEGRAM_BOT_TOKEN }}"

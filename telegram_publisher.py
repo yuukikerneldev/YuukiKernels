@@ -40,18 +40,20 @@ if __name__ == "__main__":
         print("Or set environment variables TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID")
         sys.exit(1)
         
-    message = """⚡ *YuukiKernel Universal GKI LTS* (CI Build) ⚡
+    message = """⚡ *YuukiKernel Universal GKI LTS* (CI Build)
 
-📦 *Artifacts*:
+New test build passed successfully!
+
+📦 *Downloads*:
 • `YuukiKernel-6.12.90-ResukiSU-V1.zip` (GKI 6.12)
 • `YuukiKernel-5.10.265-ResukiSU-V1.zip` (GKI 5.10)
 
-⚙️ *Build Details*:
-• *Toolchain*: Neutron Clang 24 (PGO/BOLT)
-• *Root*: ReSukiSU v4.2.0-rc1 (Build 35089)
-• *Features*: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG
-• *Status*: ✅ CI Build Passed
+⚙️ *Quick Overview*:
+• Built with Neutron Clang 24 (PGO/BOLT)
+• ReSukiSU v4.2.0-rc1 (Build 35089)
+• zRAM 6GB LZ4 & TCP BBRv1
+• Tuned schedutil governor + BBG
 
-🌐 *Source*: https://github.com/yuukikerneldev/YuukiKernels"""
+🌐 *GitHub*: https://github.com/yuukikerneldev/YuukiKernels"""
 
     send_telegram_message(bot_token, chat_id, message)
