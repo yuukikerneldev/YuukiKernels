@@ -5,19 +5,8 @@ on:
     branches:
       - main
       - master
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
-      release_build:
-        description: 'Publish as official GitHub Release?'
-        required: true
-        type: boolean
-        default: false
-      release_tag:
-        description: 'Release Tag (e.g., v1.0.0)'
-        required: false
-        default: 'v1.0.0'
       telegram_notify:
         description: 'Send Notification to Telegram Channel?'
         required: false
@@ -98,37 +87,14 @@ jobs:
           echo "- **Root Engine**: ReSukiSU v4.2.0-rc1 (Build 35089)" >> $GITHUB_STEP_SUMMARY
           echo "- **Features**: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG" >> $GITHUB_STEP_SUMMARY
 
-      - name: 📤 Upload Artifact
+      - name: 📤 Upload Artifact to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
           path: ${{ env.ZIP_PATH }}
 
-      - name: 🚀 Publish GitHub Release
-        if: ${{ inputs.release_build == true || startsWith(github.ref, 'refs/tags/v') }}
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.release_tag || github.ref_name }}
-          name: "YuukiKernel Universal GKI LTS"
-          body: |
-            ⚡ **YuukiKernel Universal GKI LTS**
-            
-            📦 **Artifacts**:
-            • `YuukiKernel-6.12.90-ResukiSU-V1.zip` (GKI 6.12)
-            • `YuukiKernel-5.10.265-ResukiSU-V1.zip` (GKI 5.10)
-            
-            ⚙️ **Highlights**:
-            • Toolchain: Neutron Clang 24 (PGO/BOLT)
-            • Root: ReSukiSU v4.2.0-rc1 (Build 35089)
-            • Features: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG
-          files: ${{ env.ZIP_PATH }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 📲 Notify Telegram
-        if: ${{ inputs.telegram_notify == true || startsWith(github.ref, 'refs/tags/v') }}
+      - name: 📲 Post CI Notification to Telegram
+        if: ${{ inputs.telegram_notify != false }}
         run: |
           TOKEN="${{ secrets.TELEGRAM_BOT_TOKEN }}"
           if [ -z "$TOKEN" ]; then

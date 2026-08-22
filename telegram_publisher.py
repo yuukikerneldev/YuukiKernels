@@ -19,7 +19,7 @@ def send_telegram_message(bot_token, chat_id, text):
     try:
         with urllib.request.urlopen(req) as response:
             res_data = response.read().decode('utf-8')
-            print("Telegram post successful:")
+            print("Telegram CI post successful:")
             print(res_data)
             return True
     except Exception as e:
@@ -40,18 +40,18 @@ if __name__ == "__main__":
         print("Or set environment variables TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID")
         sys.exit(1)
         
-    message = """⚡ *YuukiKernel Universal GKI LTS* ⚡
+    message = """⚡ *YuukiKernel Universal GKI LTS* (CI Build) ⚡
 
 📦 *Artifacts*:
 • `YuukiKernel-6.12.90-ResukiSU-V1.zip` (GKI 6.12)
 • `YuukiKernel-5.10.265-ResukiSU-V1.zip` (GKI 5.10)
 
-⚙️ *Highlights*:
+⚙️ *Build Details*:
 • *Toolchain*: Neutron Clang 24 (PGO/BOLT)
 • *Root*: ReSukiSU v4.2.0-rc1 (Build 35089)
 • *Features*: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG
+• *Status*: ✅ CI Build Passed
 
-🔗 *Download*: https://github.com/yuukikerneldev/YuukiKernels/releases/tag/v1.0.0
 🌐 *Source*: https://github.com/yuukikerneldev/YuukiKernels"""
 
     send_telegram_message(bot_token, chat_id, message)
