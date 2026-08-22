@@ -4,7 +4,12 @@ set -e
 BUILD_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 KERNEL_DIR="${BUILD_ROOT}/common"
 ANYKERNEL_DIR="${BUILD_ROOT}/AnyKernel3"
-NEUTRON_CLANG="/mnt/Shared/YuukiProjects/YuukiKernels/neutron-clang"
+
+if [ -d "${BUILD_ROOT}/../neutron-clang" ]; then
+    NEUTRON_CLANG="${BUILD_ROOT}/../neutron-clang"
+else
+    NEUTRON_CLANG="/mnt/Shared/YuukiProjects/YuukiKernels/neutron-clang"
+fi
 
 VERSION_FILE="${BUILD_ROOT}/build_version.txt"
 if [ ! -f "$VERSION_FILE" ]; then
@@ -64,13 +69,12 @@ if [ -f "arch/arm64/boot/Image.gz" ]; then
     cp "$ZIP_NAME" "$BACKUP_DIR/"
     
     PC_EXPORT="/home/yuuki/Downloads/Kernels Build"
-    mkdir -p "$PC_EXPORT"
-    cp "$ZIP_NAME" "$PC_EXPORT/"
+    mkdir -p "$PC_EXPORT" 2>/dev/null || true
+    cp "$ZIP_NAME" "$PC_EXPORT/" 2>/dev/null || true
     
     echo "=================================================="
     echo "SUCCESS: Flashable GKI 6.12 (Neutron Clang) ZIP created successfully!"
     echo "Artifact: ${ZIP_NAME}"
-    echo "PC Export: ${PC_EXPORT}/$(basename $ZIP_NAME)"
     echo "=================================================="
 else
     echo "ERROR: Image.gz not found!"

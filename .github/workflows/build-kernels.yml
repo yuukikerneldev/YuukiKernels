@@ -45,19 +45,14 @@ jobs:
       - name: ⚙️ Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl zstd python3
+          sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl zstd python3 libtinfo5
 
-      - name: 🚀 Setup Neutron Clang 24
+      - name: 🚀 Setup Neutron Clang 24 Toolchain
         run: |
-          if [ ! -d "neutron-clang" ]; then
-            mkdir -p neutron-clang
-            cd neutron-clang
-            curl -LO "https://github.com/neutron-clang/clang-build-catalogue/releases/download/v24.0.0/neutron-clang-24.0.0.tar.zst" || true
-            if [ -f "neutron-clang-24.0.0.tar.zst" ]; then
-              tar -I zstd -xf neutron-clang-24.0.0.tar.zst
-            fi
-            cd ..
-          fi
+          mkdir -p neutron-clang
+          cd neutron-clang
+          curl -s https://raw.githubusercontent.com/Neutron-Clang/neutron-clang/master/antman | bash -s -- -sync
+          cd ..
 
       - name: 🔨 Compile ${{ matrix.kernel.name }}
         run: |
@@ -87,13 +82,13 @@ jobs:
           echo "- **Root Engine**: ReSukiSU v4.2.0-rc1 (Build 35089)" >> $GITHUB_STEP_SUMMARY
           echo "- **Features**: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG" >> $GITHUB_STEP_SUMMARY
 
-      - name: 📤 Upload Artifact to GitHub Actions
+      - name: 📤 Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
           path: ${{ env.ZIP_PATH }}
 
-      - name: 📲 Post CI Notification to Telegram
+      - name: 📲 Notify Telegram
         if: ${{ inputs.telegram_notify != false }}
         run: |
           TOKEN="${{ secrets.TELEGRAM_BOT_TOKEN }}"
