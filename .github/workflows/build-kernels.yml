@@ -68,14 +68,12 @@ jobs:
           DEFCONFIG="${{ matrix.kernel.dir }}/common/arch/arm64/configs/gki_defconfig"
           sed -i '/CONFIG_KSU/d' "$DEFCONFIG"
           sed -i '/CONFIG_TCP_CONG_BBR/d' "$DEFCONFIG"
-          cat << 'EOF' >> "$DEFCONFIG"
-CONFIG_KSU=y
-CONFIG_KSU_TRACEPOINT_HOOK=y
-CONFIG_TCP_CONG_BBR=y
-CONFIG_ZRAM=m
-CONFIG_ZRAM_WRITEBACK=y
-CONFIG_ENERGY_MODEL=y
-EOF
+          echo "CONFIG_KSU=y" >> "$DEFCONFIG"
+          echo "CONFIG_KSU_TRACEPOINT_HOOK=y" >> "$DEFCONFIG"
+          echo "CONFIG_TCP_CONG_BBR=y" >> "$DEFCONFIG"
+          echo "CONFIG_ZRAM=m" >> "$DEFCONFIG"
+          echo "CONFIG_ZRAM_WRITEBACK=y" >> "$DEFCONFIG"
+          echo "CONFIG_ENERGY_MODEL=y" >> "$DEFCONFIG"
           if [ "${{ matrix.kernel.dir }}" = "GKI_5.10" ]; then
             sed -i 's/SUBLEVEL = 260/SUBLEVEL = 265/' ${{ matrix.kernel.dir }}/common/Makefile
             sed -i 's|-I$(srctree)/security/selinux -I$(srctree)/security/selinux/include|-I$(srctree)/security/selinux -I$(srctree)/security/selinux/include -I$(objtree)/security/selinux|' ${{ matrix.kernel.dir }}/common/drivers/kernelsu/kernel/Kbuild
