@@ -1,70 +1,126 @@
-name: ⚡ YuukiKernel Dual GKI LTS Builder CI
+name: 🚀 YuukiKernel Pro GKI LTS Automated CI & Release Builder
 
 on:
   push:
     branches:
       - main
       - master
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
-      build_target:
-        description: 'Choose kernel to build'
+      release_build:
+        description: 'Publish as official GitHub Release?'
         required: true
-        default: 'all'
-        type: choice
-        options:
-          - 'all'
-          - 'gki_6.12'
-          - 'gki_5.10'
+        type: boolean
+        default: false
+      release_tag:
+        description: 'Release Tag (e.g., v1.0.0)'
+        required: false
+        default: 'v1.0.0'
+      telegram_notify:
+        description: 'Send Notification to Telegram Channel?'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
-  build-gki-kernels:
-    name: 🏗️ Build GKI Kernels (Neutron Clang)
+  build-gki-matrix:
+    name: 🛠️ Build ${{ matrix.kernel.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kernel:
+          - name: "Universal GKI 6.12 LTS (Android 16)"
+            dir: "GKI_6.12"
+            version: "6.12.90"
+            tag: "GKI-6.12"
+          - name: "Universal GKI 5.10 LTS (Android 12)"
+            dir: "GKI_5.10"
+            version: "5.10.265"
+            tag: "GKI-5.10"
+
     steps:
-      - name: 📥 Checkout Repository
+      - name: 📥 Checkout Codebase
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
           fetch-depth: 1
 
-      - name: 🧹 Free Disk Space
+      - name: 🧹 Optimize Runner Storage
         run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/powershell
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/powershell /usr/lib/jvm
           sudo apt-get clean
 
-      - name: ⚙️ Install Dependencies
+      - name: ⚙️ Install Compilation Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl
+          sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl zstd
 
-      - name: 🚀 Download & Setup Neutron Clang 24
+      - name: 🚀 Setup Neutron Clang Toolchain (LLVM 24)
         run: |
-          mkdir -p neutron-clang
-          cd neutron-clang
-          curl -LO "https://github.com/neutron-clang/clang-build-catalogue/releases/download/v24.0.0/neutron-clang-24.0.0.tar.zst" || \
-          curl -LO "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
-          tar -xf *.tar.* || true
-          cd ..
+          if [ ! -d "neutron-clang" ]; then
+            mkdir -p neutron-clang
+            cd neutron-clang
+            curl -LO "https://github.com/neutron-clang/clang-build-catalogue/releases/download/v24.0.0/neutron-clang-24.0.0.tar.zst" || true
+            if [ -f "neutron-clang-24.0.0.tar.zst" ]; then
+              tar -I zstd -xf neutron-clang-24.0.0.tar.zst
+            fi
+            cd ..
+          fi
 
-      - name: 🔨 Build GKI 6.12 LTS
-        if: ${{ github.event.inputs.build_target == 'all' || github.event.inputs.build_target == 'gki_6.12' || github.event_name == 'push' }}
+      - name: 🔨 Compile ${{ matrix.kernel.name }}
         run: |
-          cd GKI_6.12
+          cd ${{ matrix.kernel.dir }}
           chmod +x build.sh
           ./build.sh
 
-      - name: 🔨 Build GKI 5.10 LTS
-        if: ${{ github.event.inputs.build_target == 'all' || github.event.inputs.build_target == 'gki_5.10' || github.event_name == 'push' }}
+      - name: 🔍 Find & Store Output Package
+        id: find_zip
         run: |
-          cd GKI_5.10
-          chmod +x build.sh
-          ./build.sh
+          ZIP_FILE=$(find ${{ matrix.kernel.dir }}/ -maxdepth 1 -name "YuukiKernel-*.zip" | head -n 1)
+          if [ -f "$ZIP_FILE" ]; then
+            echo "ZIP_PATH=$ZIP_FILE" >> $GITHUB_ENV
+            echo "ZIP_NAME=$(basename $ZIP_FILE)" >> $GITHUB_ENV
+            echo "MD5_HASH=$(md5sum $ZIP_FILE | awk '{print $1}')" >> $GITHUB_ENV
+          else
+            echo "::error::Zip file not found!"
+            exit 1
+          fi
 
-      - name: 📤 Upload Build Artifacts
+      - name: 📊 Generate Summary Report
+        run: |
+          echo "### ⚡ Build Summary for ${{ matrix.kernel.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Artifact**: \`${{ env.ZIP_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **MD5 Checksum**: \`${{ env.MD5_HASH }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Toolchain**: Neutron Clang 24.0.0git (PGO/BOLT)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Root Engine**: ReSukiSU v4.2.0-rc1 (Build 35089)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Features**: zRAM 6GB LZ4 | TCP BBRv1 | Schedutil Tuned | BBG" >> $GITHUB_STEP_SUMMARY
+
+      - name: 📤 Upload Artifact to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
-          name: YuukiKernel-Builds
-          path: |
-            GKI_6.12/*.zip
-            GKI_5.10/*.zip
+          name: ${{ env.ZIP_NAME }}
+          path: ${{ env.ZIP_PATH }}
+
+      - name: 🚀 Publish Official GitHub Release
+        if: ${{ inputs.release_build == true || startsWith(github.ref, 'refs/tags/v') }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
+          name: "YuukiKernel Dual GKI LTS Release ${{ inputs.release_tag || github.ref_name }}"
+          body: |
+            ## ⚡ YuukiKernel Dual GKI LTS Official Release
+            
+            ### 🌟 Release Highlights
+            - **Compiler**: Neutron Clang 24.0.0git (PGO/BOLT optimized)
+            - **Root Engine**: ReSukiSU v4.2.0-rc1 (Build 35089) with Tracepoint Syscall Redirect Hook
+            - **Memory & Performance**: zRAM 6GB LZ4 (`vm.swappiness = 100`) & TCP BBRv1
+            - **Governor Tuning**: Schedutil Game Turbo Response (Liên Quân, TFT, PUBG, ZingSpeed, Free Fire) + BBG Energy Guard
+            - **Universal Compatibility**: 100% Universal GKI LTS for all GKI 6.12 & GKI 5.10 devices.
+          files: ${{ env.ZIP_PATH }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
