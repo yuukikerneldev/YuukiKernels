@@ -38,7 +38,7 @@ jobs:
       - name: Install Build Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl zstd python3 libtinfo5
+          sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl zstd python3 libtinfo6 || sudo apt-get install -y build-essential bison flex libssl-dev libelf-dev zip ccache git wget curl zstd python3
 
       - name: Setup Toolchain (Neutron Clang 24)
         run: |
