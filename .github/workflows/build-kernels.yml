@@ -109,9 +109,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.release_tag || github.ref_name }}
-          name: "YuukiKernel Dual GKI LTS Release ${{ inputs.release_tag || github.ref_name }}"
+          name: "YuukiKernel Universal GKI LTS Release ${{ inputs.release_tag || github.ref_name }}"
           body: |
-            ## ⚡ YuukiKernel Dual GKI LTS Official Release
+            ## ⚡ YuukiKernel Universal GKI LTS Official Release
             
             ### 🌟 Release Highlights
             - **Compiler**: Neutron Clang 24.0.0git (PGO/BOLT optimized)

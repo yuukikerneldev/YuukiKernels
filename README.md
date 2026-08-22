@@ -1,4 +1,4 @@
-# ⚡ YuukiKernel GKI LTS - Universal Custom Android Kernel
+# ⚡ YuukiKernel Universal GKI LTS
 
 Official high-performance **Generic Kernel Image (GKI) LTS** custom kernels compiled with **Neutron Clang 24.0.0git** (PGO/BOLT optimized) for all Android GKI devices.
 
