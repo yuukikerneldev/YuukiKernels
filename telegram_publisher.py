@@ -40,7 +40,7 @@ if __name__ == "__main__":
         print("Or set environment variables TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID")
         sys.exit(1)
         
-    message = """⚡ *YuukiKernel Universal GKI LTS - V1 Official Release* ⚡
+    message = """⚡ *YuukiKernel Universal GKI LTS* ⚡
 
 High-performance Universal Generic Kernel Image (GKI) LTS Custom Kernels compiled with *Neutron Clang 24.0.0git* (PGO/BOLT Optimized).
 
