@@ -32,8 +32,20 @@ A clean, performance-oriented custom GKI kernel for Android devices running GKI 
 
 ---
 
-## Credits
+## Credits & Acknowledgments
 
-- **Linux Kernel** & **Android GKI** developers
-- **ReSukiSU** & **KernelSU** project
-- **Neutron Clang** team
+Special thanks to all developers and open-source projects that made **YuukiKernel** possible:
+
+- **[Linux Kernel](https://www.kernel.org/)** & **[Android Open Source Project (AOSP)](https://source.android.com/)**: For the GKI LTS base kernel.
+- **[ReSukiSU](https://github.com/ReSukiSU/ReSukiSU)**: For the advanced root engine.
+- **[KernelSU](https://github.com/tiann/KernelSU)**: Created by [tiann](https://github.com/tiann) and contributors.
+- **[SuSFS](https://gitlab.com/simonpunk/susfs4ksu)**: Created by [simonpunk](https://gitlab.com/simonpunk).
+- **[Neutron Clang](https://github.com/Neutron-Clang)**: Created by Dakkshesh & team for LLVM PGO/BOLT toolchain optimizations.
+- **[AnyKernel3](https://github.com/osm0sis/AnyKernel3)**: Created by [osm0sis](https://github.com/osm0sis) for universal recovery flashable packages.
+- **[payload-dumper-go](https://github.com/ssut/payload-dumper-go)**: Created by [ssut](https://github.com/ssut).
+
+---
+
+## 📄 License
+Licensed under **GPL v2.0**.
+Created with ❤️ by **Yuuki**.
