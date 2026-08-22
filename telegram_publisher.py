@@ -11,7 +11,7 @@ def send_telegram_message(bot_token, chat_id, text):
         "chat_id": chat_id,
         "text": text,
         "parse_mode": "Markdown",
-        "disable_web_page_preview": False
+        "disable_web_page_preview": True
     }
     data = json.dumps(payload).encode('utf-8')
     req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
@@ -42,25 +42,16 @@ if __name__ == "__main__":
         
     message = """⚡ *YuukiKernel Universal GKI LTS* ⚡
 
-High-performance Universal Generic Kernel Image (GKI) LTS Custom Kernels compiled with *Neutron Clang 24.0.0git* (PGO/BOLT Optimized).
+📦 *Artifacts*:
+• `YuukiKernel-6.12.90-ResukiSU-V1.zip` (GKI 6.12)
+• `YuukiKernel-5.10.265-ResukiSU-V1.zip` (GKI 5.10)
 
-📌 *Release Artifacts*:
-• `YuukiKernel-6.12.90-ResukiSU-V1.zip` (Android 16 GKI 6.12 LTS)
-• `YuukiKernel-5.10.265-ResukiSU-V1.zip` (Android 12/13/14 GKI 5.10 LTS)
+⚙️ *Highlights*:
+• *Toolchain*: Neutron Clang 24 (PGO/BOLT)
+• *Root*: ReSukiSU v4.2.0-rc1 (Build 35089)
+• *Features*: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG
 
-🛡️ *Key Features & Highlights*:
-- *Compiler*: Neutron Clang 24.0.0git (PGO & BOLT Optimized, LLVM IAS 1)
-- *Root Engine*: ReSukiSU v4.2.0-rc1 (Build Code 35089) with Tracepoint Syscall Redirect Hook
-- *Memory & Swap*: zRAM 6GB LZ4 Algorithm (`vm.swappiness = 100`)
-- *Network*: TCP BBRv1 Congestion Control
-- *Governor Tuning*: Schedutil Game Turbo Response (Tuned for Arena of Valor, TFT, PUBG, Speed Drifters, Free Fire)
-- *Energy Guard*: BBG (Baseband & Battery Guard)
-- *Universal Scope*: 100% Universal GKI LTS support for ALL GKI 6.12 & GKI 5.10 devices!
-
-🔗 *GitHub Release Downloads*:
-https://github.com/yuukikerneldev/YuukiKernels/releases/tag/v1.0.0
-
-🌐 *Repository*:
-https://github.com/yuukikerneldev/YuukiKernels"""
+🔗 *Download*: https://github.com/yuukikerneldev/YuukiKernels/releases/tag/v1.0.0
+🌐 *Source*: https://github.com/yuukikerneldev/YuukiKernels"""
 
     send_telegram_message(bot_token, chat_id, message)

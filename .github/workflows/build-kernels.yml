@@ -1,4 +1,4 @@
-name: 🚀 YuukiKernel Pro GKI LTS Automated CI & Release Builder
+name: 🚀 YuukiKernel Universal GKI LTS Automated CI Builder
 
 on:
   push:
@@ -48,17 +48,17 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 1
 
-      - name: 🧹 Optimize Runner Storage
+      - name: 🧹 Optimize Storage
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/powershell /usr/lib/jvm
           sudo apt-get clean
 
-      - name: ⚙️ Install Compilation Dependencies
+      - name: ⚙️ Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential bison flex libssl-dev libncurses5-dev libelf-dev zip ccache git wget curl zstd python3
 
-      - name: 🚀 Setup Neutron Clang Toolchain (LLVM 24)
+      - name: 🚀 Setup Neutron Clang 24
         run: |
           if [ ! -d "neutron-clang" ]; then
             mkdir -p neutron-clang
@@ -76,7 +76,7 @@ jobs:
           chmod +x build.sh
           ./build.sh
 
-      - name: 🔍 Find & Store Output Package
+      - name: 🔍 Store Output Package
         id: find_zip
         run: |
           ZIP_FILE=$(find ${{ matrix.kernel.dir }}/ -maxdepth 1 -name "YuukiKernel-*.zip" | head -n 1)
@@ -89,43 +89,45 @@ jobs:
             exit 1
           fi
 
-      - name: 📊 Generate Summary Report
+      - name: 📊 Summary Report
         run: |
-          echo "### ⚡ Build Summary for ${{ matrix.kernel.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "### ⚡ Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "- **Artifact**: \`${{ env.ZIP_NAME }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **MD5 Checksum**: \`${{ env.MD5_HASH }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Toolchain**: Neutron Clang 24.0.0git (PGO/BOLT)" >> $GITHUB_STEP_SUMMARY
+          echo "- **MD5**: \`${{ env.MD5_HASH }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Toolchain**: Neutron Clang 24 (PGO/BOLT)" >> $GITHUB_STEP_SUMMARY
           echo "- **Root Engine**: ReSukiSU v4.2.0-rc1 (Build 35089)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Features**: zRAM 6GB LZ4 | TCP BBRv1 | Schedutil Tuned | BBG" >> $GITHUB_STEP_SUMMARY
+          echo "- **Features**: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG" >> $GITHUB_STEP_SUMMARY
 
-      - name: 📤 Upload Artifact to GitHub Actions
+      - name: 📤 Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ZIP_NAME }}
           path: ${{ env.ZIP_PATH }}
 
-      - name: 🚀 Publish Official GitHub Release
+      - name: 🚀 Publish GitHub Release
         if: ${{ inputs.release_build == true || startsWith(github.ref, 'refs/tags/v') }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.release_tag || github.ref_name }}
-          name: "YuukiKernel Universal GKI LTS Release ${{ inputs.release_tag || github.ref_name }}"
+          name: "YuukiKernel Universal GKI LTS"
           body: |
-            ## ⚡ YuukiKernel Universal GKI LTS Official Release
+            ⚡ **YuukiKernel Universal GKI LTS**
             
-            ### 🌟 Release Highlights
-            - **Compiler**: Neutron Clang 24.0.0git (PGO/BOLT optimized)
-            - **Root Engine**: ReSukiSU v4.2.0-rc1 (Build 35089) with Tracepoint Syscall Redirect Hook
-            - **Memory & Performance**: zRAM 6GB LZ4 (`vm.swappiness = 100`) & TCP BBRv1
-            - **Governor Tuning**: Schedutil Game Turbo Response (Liên Quân, TFT, PUBG, ZingSpeed, Free Fire) + BBG Energy Guard
-            - **Universal Compatibility**: 100% Universal GKI LTS for all GKI 6.12 & GKI 5.10 devices.
+            📦 **Artifacts**:
+            • `YuukiKernel-6.12.90-ResukiSU-V1.zip` (GKI 6.12)
+            • `YuukiKernel-5.10.265-ResukiSU-V1.zip` (GKI 5.10)
+            
+            ⚙️ **Highlights**:
+            • Toolchain: Neutron Clang 24 (PGO/BOLT)
+            • Root: ReSukiSU v4.2.0-rc1 (Build 35089)
+            • Features: zRAM 6GB LZ4 | BBRv1 | Schedutil Game Turbo | BBG
           files: ${{ env.ZIP_PATH }}
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📲 Post Release Notification to Telegram
+      - name: 📲 Notify Telegram
         if: ${{ inputs.telegram_notify == true || startsWith(github.ref, 'refs/tags/v') }}
         run: |
           TOKEN="${{ secrets.TELEGRAM_BOT_TOKEN }}"
