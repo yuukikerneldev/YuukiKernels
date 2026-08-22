@@ -44,7 +44,7 @@ jobs:
         run: |
           mkdir -p neutron-clang
           cd neutron-clang
-          curl -s https://raw.githubusercontent.com/Neutron-Clang/neutron-clang/master/antman | bash -s -- -sync
+          bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") -S
           cd ..
 
       - name: Build Kernel (${{ matrix.kernel.name }})
