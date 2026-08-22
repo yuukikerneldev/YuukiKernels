@@ -1,0 +1,30 @@
+# Build outputs & artifacts
+*.zip
+*.tar.gz
+*.o
+*.a
+*.ko
+*.mod.c
+*.mod
+*.cmd
+*.tmp
+.tmp_*
+vmlinux*
+System.map
+modules.builtin*
+modules.order
+
+# Generated kernel images
+arch/arm64/boot/Image*
+AnyKernel3/Image*
+
+# Local build state
+build_version.txt
+backups/
+.config*
+.scmversion
+
+# IDE & OS clutter
+.DS_Store
+.idea/
+.vscode/
