@@ -23,8 +23,10 @@ jobs:
         kernel:
           - name: "GKI 6.12 LTS"
             dir: "GKI_6.12"
+            branch: "android16-6.12"
           - name: "GKI 5.10 LTS"
             dir: "GKI_5.10"
+            branch: "android12-5.10"
 
     steps:
       - name: Checkout Repository
@@ -46,6 +48,38 @@ jobs:
           cd neutron-clang
           bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") -S
           cd ..
+
+      - name: Clone GKI Kernel & ReSukiSU Source
+        run: |
+          echo "[+] Cloning GKI Kernel tree (${{ matrix.kernel.branch }})..."
+          git clone --depth=1 https://android.googlesource.com/kernel/common -b ${{ matrix.kernel.branch }} ${{ matrix.kernel.dir }}/common
+          
+          echo "[+] Cloning ReSukiSU driver..."
+          git clone --depth=1 https://github.com/ReSukiSU/ReSukiSU ${{ matrix.kernel.dir }}/common/drivers/kernelsu
+          
+          echo "[+] Injecting ReSukiSU into drivers/Kconfig & drivers/Makefile..."
+          sed -i '/drivers\/kernelsu\/kernel\/Kconfig/d' ${{ matrix.kernel.dir }}/common/drivers/Kconfig
+          echo 'source "drivers/kernelsu/kernel/Kconfig"' >> ${{ matrix.kernel.dir }}/common/drivers/Kconfig
+          
+          sed -i '/kernelsu/d' ${{ matrix.kernel.dir }}/common/drivers/Makefile
+          echo 'obj-y += kernelsu/' >> ${{ matrix.kernel.dir }}/common/drivers/Makefile
+          
+          echo "[+] Injecting defconfig performance options..."
+          DEFCONFIG="${{ matrix.kernel.dir }}/common/arch/arm64/configs/gki_defconfig"
+          sed -i '/CONFIG_KSU/d' "$DEFCONFIG"
+          sed -i '/CONFIG_TCP_CONG_BBR/d' "$DEFCONFIG"
+          cat << 'EOF' >> "$DEFCONFIG"
+CONFIG_KSU=y
+CONFIG_KSU_TRACEPOINT_HOOK=y
+CONFIG_TCP_CONG_BBR=y
+CONFIG_ZRAM=m
+CONFIG_ZRAM_WRITEBACK=y
+CONFIG_ENERGY_MODEL=y
+EOF
+          if [ "${{ matrix.kernel.dir }}" = "GKI_5.10" ]; then
+            sed -i 's/SUBLEVEL = 260/SUBLEVEL = 265/' ${{ matrix.kernel.dir }}/common/Makefile
+            sed -i 's|-I$(srctree)/security/selinux -I$(srctree)/security/selinux/include|-I$(srctree)/security/selinux -I$(srctree)/security/selinux/include -I$(objtree)/security/selinux|' ${{ matrix.kernel.dir }}/common/drivers/kernelsu/kernel/Kbuild
+          fi
 
       - name: Build Kernel (${{ matrix.kernel.name }})
         run: |
