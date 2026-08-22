@@ -53,7 +53,7 @@ High-performance Universal Generic Kernel Image (GKI) LTS Custom Kernels compile
 - *Root Engine*: ReSukiSU v4.2.0-rc1 (Build Code 35089) with Tracepoint Syscall Redirect Hook
 - *Memory & Swap*: zRAM 6GB LZ4 Algorithm (`vm.swappiness = 100`)
 - *Network*: TCP BBRv1 Congestion Control
-- *Governor Tuning*: Schedutil Game Turbo Response (Tuned for Liên Quân, TFT, PUBG, ZingSpeed, Free Fire)
+- *Governor Tuning*: Schedutil Game Turbo Response (Tuned for Arena of Valor, TFT, PUBG, Speed Drifters, Free Fire)
 - *Energy Guard*: BBG (Baseband & Battery Guard)
 - *Universal Scope*: 100% Universal GKI LTS support for ALL GKI 6.12 & GKI 5.10 devices!
 

@@ -9,26 +9,26 @@ Official high-performance **Generic Kernel Image (GKI) LTS** custom kernels comp
 ### 🛡️ 1. ReSukiSU Root Engine (Build 35089)
 - **Root Engine**: Integrated **ReSukiSU `v4.2.0-rc1`** (Build Code `35089`).
 - **Tracepoint Syscall Redirect Hook**: Native GKI 2.0 tracepoint redirection hook for clean stealth root management.
-- **Universal Banking Compatibility**: Designed for maximum stability and application compatibility worldwide.
+- **Universal Banking Compatibility**: Designed for maximum system stability and global banking application compatibility.
 
 ### 💾 2. Memory & Swap Optimization (zRAM 6GB LZ4)
 - **Aggressive Swappiness**: Pre-configured `vm.swappiness = 100`.
-- **6GB LZ4 Compression**: `CONFIG_ZRAM=y` and `CONFIG_ZRAM_DEF_COMP_LZ4=y` for zero-lag multitasking and high-RAM retention.
+- **6GB LZ4 Compression**: `CONFIG_ZRAM=y` and `CONFIG_ZRAM_DEF_COMP_LZ4=y` for zero-lag multitasking and extended RAM retention.
 
 ### 🌐 3. Network Performance (TCP BBRv1)
-- **Congestion Control**: `CONFIG_TCP_CONG_BBR=y` set as default system TCP congestion control for low ping in online games and fast downloads.
+- **Congestion Control**: `CONFIG_TCP_CONG_BBR=y` set as default system TCP congestion control for minimal latency in online multiplayer gaming and high-speed downloads.
 
-### 🎮 4. Schedutil Dynamic Energy Governor (Game Boost & Daily Power Saver)
+### 🎮 4. Schedutil Dynamic Energy Governor (Game Boost & Power Saving)
 - **Daily Efficiency**: Dynamic frequency scaling for extended battery life during daily use.
-- **Game Turbo Response**: Fast response for smooth 60 / 90 / 120 FPS gaming:
-  - ⚔️ **Liên Quân Mobile** (`com.garena.game.kgvn`)
-  - ♟️ **Đấu Trường Chân Lý Mobile (TFT)** (`com.riotgames.league.teamfighttactics`)
+- **Game Turbo Response**: Rapid frequency response for smooth 60 / 90 / 120 FPS gaming performance:
+  - ⚔️ **Arena of Valor** (`com.garena.game.kgvn`)
+  - ♟️ **Teamfight Tactics Mobile (TFT)** (`com.riotgames.league.teamfighttactics`)
   - 🔫 **PUBG Mobile** (`com.tencent.ig` / `com.vng.pubgmobile`)
-  - 🏎️ **ZingSpeed Mobile** (`com.vng.g6.zingspeedmobile`)
+  - 🏎️ **Speed Drifters** (`com.vng.g6.zingspeedmobile`)
   - 🔥 **Free Fire** (`com.dts.freefireth`)
 
 ### 🔋 5. BBG (Baseband & Battery Guard)
-- **Modem Guard**: Restricts unnecessary baseband modem wakeups while idle or on Wi-Fi.
+- **Modem Guard**: Restricts unnecessary baseband modem wakeups while idle or connected to Wi-Fi.
 - **Thermal Stabilization**: Maintains sustained peak cluster performance without thermal throttling drops.
 
 ---
