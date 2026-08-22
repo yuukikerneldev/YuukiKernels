@@ -116,7 +116,6 @@ EOF
           path: ${{ env.ZIP_PATH }}
 
       - name: Notify Telegram Channel
-        if: ${{ inputs.telegram_notify != false }}
         run: |
           TOKEN="${{ secrets.TELEGRAM_BOT_TOKEN }}"
           if [ -z "$TOKEN" ]; then
