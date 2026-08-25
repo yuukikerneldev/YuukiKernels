@@ -4,18 +4,18 @@
 ### AnyKernel setup
 # global properties
 properties() { '
-kernel.string=Yuuki-ResukiSU by Yuuki
-do.devicecheck=1
+kernel.string=YuukiKernel Universal GKI 6.12 by Yuuki
+do.devicecheck=0
 do.modules=0
 do.systemless=1
 do.cleanup=1
 do.cleanuponabort=0
-device.name1=wrist
-device.name2=aristotle
+device.name1=
+device.name2=
 device.name3=
 device.name4=
 device.name5=
-supported.versions=12, 13, 14, 15
+supported.versions=
 supported.patchlevels=
 supported.vendorpatchlevels=
 '; } # end properties
@@ -39,7 +39,7 @@ ui_print "  \\  /|_|| || | | |/ /| |"
 ui_print "  / / |_|| || | |   < | |"
 ui_print " /_/  \\___|\\_,_|_|\\_\\|_|"
 ui_print "=========================================="
-ui_print "          YUUKI KERNEL V2"
+ui_print "     YUUKI KERNEL UNIVERSAL GKI 6.12"
 ui_print "=========================================="
 ui_print " Current Kernel : $CURRENT_KERNEL"
 ui_print " New Kernel     : $NEW_KERNEL"
